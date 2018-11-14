@@ -121,7 +121,7 @@ def remove_github(request):
 def update_data(request):
     if request.method == "POST" and request.user.is_authenticated:
         oh_member = request.user.oh_member
-        process_github.delay(oh_member.oh_id)
+        process_github(oh_member.oh_id)
         github_member = oh_member.datasourcemember
         github_member.last_submitted = arrow.now().format()
         github_member.save()
@@ -176,6 +176,7 @@ def github_code_to_member(code, ohmember):
         req = requests.post('https://github.com/login/oauth/access_token',
                             data=data, headers=headers)
         data = req.json()
+        # TODO: handle if there is an error from the access token req.
         print(data)
         # Now that we have a token, let's get the users "profile" back with their token:
         auth_string = 'token {}'.format(data['access_token'])

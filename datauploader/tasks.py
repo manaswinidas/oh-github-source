@@ -37,7 +37,7 @@ def process_github(oh_id):
     oh_access_token = oh_member.get_access_token(
                             client_id=settings.OPENHUMANS_CLIENT_ID,
                             client_secret=settings.OPENHUMANS_CLIENT_SECRET)
-    github_data = get_existing_github(oh_access_token)
+    github_data = get_existing_github(oh_access_token) # does it matter if we get existing?? updates may not be sequential. need to examine data
     github_member = oh_member.datasourcemember
     github_access_token = github_member.get_access_token(
                             client_id=settings.GITHUB_CLIENT_ID,
@@ -65,19 +65,19 @@ def update_github(oh_member, github_access_token, github_data):
             #          )
         query = """ 
           { 
-            viewer{
-            login  
-            url
-            id
-            email
-            bio
-            company
-            companyHTML
-            pullRequests{
+            viewer {
+              login  
+              url
+              id
+              email
+              bio
+              company
+              companyHTML
+              pullRequests{
+                totalCount
+              }
+              gists {
               totalCount
-            }
-            gists {
-            totalCount
           }
             company
             repositoriesContributedTo(first:10){
@@ -165,7 +165,7 @@ def update_github(oh_member, github_access_token, github_data):
                   url
                 }
               }
-            } 
+            }
           }
         }      
         """
@@ -180,7 +180,7 @@ def update_github(oh_member, github_access_token, github_data):
         github_data = response.json()
 
         print(github_data)
-        
+
         print('successfully finished update for {}'.format(oh_member.oh_id))
         github_member = oh_member.datasourcemember
         github_member.last_updated = arrow.now().format()
