@@ -176,6 +176,7 @@ def github_code_to_member(code, ohmember):
         req = requests.post('https://github.com/login/oauth/access_token',
                             data=data, headers=headers)
         data = req.json()
+        # TODO: handle if there is an error from the access token req.
         print(data)
         # Now that we have a token, let's get the users "profile" back with their token:
         auth_string = 'token {}'.format(data['access_token'])
